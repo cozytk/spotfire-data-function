@@ -9,7 +9,6 @@ on:
   push:
     branches:
       - main
-      - claude/spotfire-python-data-functions-g2mgt3
   workflow_dispatch:
 
 permissions:
