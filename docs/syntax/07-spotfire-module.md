@@ -87,6 +87,25 @@ output = result
 >
 > 존재하지 않는 컬럼명을 지정한 경우도 마찬가지로 경고만 뜹니다.
 
+{: .주의 }
+> ## 반드시 **마지막에** 호출하세요
+>
+> 지정한 타입은 **그 DataFrame 객체에 붙는 표시**입니다.
+> 지정한 뒤에 `reset_index()` · `sort_values()` · `df[cols]` 처럼
+> **새 DataFrame 을 만드는 연산**을 하면 표시가 사라져,
+> 결국 원래의 "타입을 결정할 수 없음" 오류로 되돌아갑니다.
+>
+> ```python
+> spotfire.set_spotfire_types(result, {"REMARK": "String"})
+> output = result.reset_index(drop=True)      # ❌ 지정이 날아간다
+>
+> result = result.reset_index(drop=True)
+> spotfire.set_spotfire_types(result, {"REMARK": "String"})
+> output = result                             # ✅
+> ```
+>
+> **모든 가공을 끝낸 뒤 → 타입 지정 → 바로 출력.** 이 순서를 지키세요.
+
 ### 정수 타입을 명시적으로 고정하기
 
 pandas의 기본 정수는 `int64` 라서 그냥 내보내면 **LongInteger** 가 됩니다.
