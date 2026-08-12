@@ -1,11 +1,15 @@
-# 이 워크플로는 Pages 소스를 "GitHub Actions" 로 설정한 경우에만 사용합니다.
+# 이 저장소의 Pages 소스는 "GitHub Actions" 입니다(Settings → Pages → Source).
 #
-# 기본 설정("Deploy from a branch")에서는 GitHub 이 자체 빌더로 docs/ 를 빌드하므로
-# 이 워크플로가 필요하지 않습니다. (그 상태에서 실행하면 배포 단계에서 실패합니다.)
-# 그래서 자동 트리거 없이 수동 실행(workflow_dispatch)만 열어 두었습니다.
-name: Deploy docs to GitHub Pages (Actions 소스 전용)
+# GitHub 기본 빌더(Deploy from a branch)는 github-pages 젬 세트에 묶여 있어
+# just-the-docs 테마를 빌드하지 못합니다. 그래서 Ruby/Jekyll 을 직접 세워
+# docs/ 를 빌드한 뒤 그 결과물만 Pages 로 올립니다.
+name: Deploy docs to GitHub Pages
 
 on:
+  push:
+    branches:
+      - main
+      - claude/spotfire-python-data-functions-g2mgt3
   workflow_dispatch:
 
 permissions:
