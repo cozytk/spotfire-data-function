@@ -64,7 +64,7 @@ after.isna().sum().sum()    # 처리 후 — 이유 없이 늘었다면 조사
 
 ---
 
-## 조용히 틀리는 대표 유형 7가지
+## 조용히 틀리는 대표 유형 8가지
 
 ### 1. 정렬을 빼먹은 시계열 계산
 
@@ -113,6 +113,19 @@ result = result.reset_index(drop=True)
 표본 3개짜리 그룹의 Cpk, 표준편차, 회귀 기울기는 **숫자는 나오지만 의미가 없습니다.**
 반드시 최소 표본 수 조건을 넣고, 미달 그룹은 **계산하지 말고 표시**하세요.
 
+### 8. 그룹 키가 통째로 사라짐
+
+**오류 없이 데이터가 사라지는 가장 흔한 경로**입니다.
+인덱스는 Spotfire로 전달되지 않으므로, `groupby()` 결과를 그대로 내보내면
+그룹 키 컬럼이 없어집니다. 값만 남아 어느 설비 것인지 알 수 없게 됩니다.
+
+```python
+output = df.groupby("EQP_ID")["THICKNESS"].mean()                  # ❌ EQP_ID 소실
+output = df.groupby("EQP_ID", as_index=False)["THICKNESS"].mean()  # ✅
+```
+
+`pivot_table()`, `value_counts()`, `describe()`, `agg()` 전부 해당합니다.
+
 ---
 
 ## 검증용 데이터 함수
@@ -126,9 +139,11 @@ df = input
 rows = []
 for c in df.columns:
     s = df[c]
+    first = s.dropna().iloc[0] if s.notna().any() else None
     rows.append({
         "COLUMN": c,
         "DTYPE": str(s.dtype),
+        "VALUE_TYPE": type(first).__name__ if first is not None else "-",   # object 의 정체
         "N": int(s.size),
         "NULL": int(s.isna().sum()),
         "NULL_PCT": round(float(s.isna().mean() * 100), 2),
@@ -148,6 +163,13 @@ output = pd.DataFrame(rows)
 - `ZERO_CNT` 가 많은 숫자 컬럼 → **0이 결측 아닌지** 확인
 - `NUNIQUE` 가 1 → 상수 컬럼, 계산에서 문제를 일으킬 수 있음
 - `DTYPE` 이 `object` 인데 숫자처럼 보임 → 타입 변환 누락
+- **`VALUE_TYPE` 이 `datetime` 인데 `DTYPE` 이 `object`** → Spotfire DateTime 컬럼.
+  `pd.to_datetime()` 을 거치지 않으면 `.dt` 가 실패합니다
+
+{: .팁 }
+> 이 점검을 정규화까지 포함해 완성한 것이
+> [25번 예제(입력 타입 진단기)](../../examples/25-input-type-doctor/)입니다.
+> 라이브러리에 저장해 두고 새 데이터를 만날 때마다 돌려 보세요.
 
 ---
 
@@ -168,8 +190,11 @@ output = pd.DataFrame(rows)
 3. 0으로 나누기 가능성
 4. 결측이 있을 때 결과가 왜곡되는 지점
 5. 표본이 적은 그룹에서 의미 없는 값이 나오는 지점
-6. Spotfire 출력 시 문제가 될 부분 (빈 결과, 전부 결측인 컬럼, 문자열 아닌 컬럼명)
-7. 100만 행에서 느려질 지점
+6. Spotfire 입력 타입 가정 오류
+   (DateTime/Boolean 컬럼은 object dtype 인데 .dt 나 불리언 연산을 바로 쓴 곳)
+7. Spotfire 출력 시 문제가 될 부분
+   (빈 결과, 전부 결측인 컬럼, 문자열 아닌 컬럼명, 인덱스에 남아 있는 그룹 키)
+8. 100만 행에서 느려질 지점
 
 문제가 없다면 '없음'이라고 말하고, 있다면 수정 코드를 제시해줘.
 ````
@@ -189,6 +214,9 @@ output = pd.DataFrame(rows)
 - [ ] 컬럼이 없을 때 **의미 있는 오류 메시지**가 나오는가
 - [ ] 실행 시간이 허용 범위인가 (자동 재계산이면 특히)
 - [ ] 결과 테이블의 컬럼명이 전부 문자열인가
+- [ ] **그룹 키가 컬럼으로 나와 있는가** (인덱스에 숨어 있지 않은가)
+- [ ] **전부 결측인 컬럼이 없는가** (있다면 `set_spotfire_types` 로 타입 지정했는가)
+- [ ] 서버(Web Player)에서도 쓸 분석이라면 **추가 패키지가 서버에 배포되어 있는가**
 - [ ] 코드를 **내가 설명할 수 있는가** ← 가장 중요
 
 {: .주의 }
