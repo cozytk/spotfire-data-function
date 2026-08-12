@@ -75,8 +75,12 @@ def log(step_name, before, after):
 n0 = len(df)
 
 # 0) 문자열 컬럼의 빈 문자열을 결측으로 통일 (Spotfire 에서 넘어온 빈 값 대비)
-obj_cols = df.select_dtypes(include="object").columns
-df[obj_cols] = df[obj_cols].replace(r"^\s*$", np.nan, regex=True)
+#    주의: Spotfire 입력에서는 DateTime/Boolean 도 object dtype 이므로
+#    select_dtypes("object") 는 '문자열 컬럼'이 아니다. 실제 값 타입으로 골라야 한다.
+str_cols = [c for c in df.columns if df[c].dropna().map(lambda v: isinstance(v, str)).all()
+            and df[c].notna().any()]
+for c in str_cols:
+    df[c] = df[c].mask(df[c].str.strip() == "", np.nan)
 
 # 1) 핵심 계측값이 비어 있는 행 삭제 (subset 으로 대상을 반드시 좁힌다)
 before = len(df)
@@ -109,7 +113,10 @@ output_report = pd.DataFrame(
 - 기존 실습에 나오는 `df[(df != 0).all(axis=1)]` 은 **모든 컬럼**을 검사합니다.
   `WAFER_NO`, `PARTICLE_CNT` 처럼 **0이 정상값인 컬럼까지 지워 버리는** 대표적인 사고입니다.
   → 반드시 "0이 결측을 의미하는 컬럼"만 지정해서 검사하세요.
-- 문자열 컬럼의 빈 문자열 `""` 은 `NaN` 이 아닙니다. 필요하면 `replace("", np.nan)` 로 먼저 통일하세요.
+- 문자열 컬럼의 빈 문자열 `""` 은 `NaN` 이 아닙니다. 필요하면 공백만 있는 값까지 결측으로 통일하세요.
+- **`select_dtypes("object")` 를 "문자열 컬럼"이라고 생각하면 안 됩니다.**
+  Spotfire 가 넘겨주는 DateTime·Boolean·Binary 컬럼도 전부 `object` dtype 입니다.
+  ([타입 매핑 표](../../syntax/03-datatypes/)) 실제 셀 값 타입으로 골라야 안전합니다.
 - 몇 건이 왜 지워졌는지를 **리포트 테이블로 함께 출력**하면 리뷰가 통과됩니다.
 
 ## 이렇게 물어보세요 (프롬프트)

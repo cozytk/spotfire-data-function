@@ -18,11 +18,12 @@ nav_order: 2
 import pandas as pd
 import numpy as np
 
-df = input.copy()          # 입력 (파라미터 이름과 일치해야 함)
+df = input.copy()                              # 입력 (파라미터 이름과 일치해야 함)
+df["MEAS_TIME"] = pd.to_datetime(df["MEAS_TIME"])   # 시각 컬럼은 반드시 변환하고 시작
 
 # ... 처리 ...
 
-output = df.reset_index(drop=True)    # 출력 (반드시 할당)
+output = df.reset_index(drop=True)             # 출력 (반드시 할당, 인덱스는 전달 안 됨)
 ```
 
 ## 파라미터
@@ -34,18 +35,47 @@ output = df.reset_index(drop=True)    # 출력 (반드시 할당)
 | Table | `DataFrame` | 데이터 테이블 |
 
 **입력 제한**: 없음 / 필터링 / **마킹** / 둘 다(교집합)
+**미연결 선택 입력** → 변수는 존재하고 값은 `None`
 
-## 타입 매핑
+## 타입 매핑 (들어올 때)
 
-| Spotfire | pandas |
+| Spotfire | 데이터 함수 안의 dtype | 셀 값 |
+|---|---|---|
+| Integer / LongInteger | `Int32` / `Int64` (nullable) | `numpy.int32/64` |
+| Real / SingleReal | `float64` / `float32` | |
+| String | `object` | `str` |
+| **Boolean** | **`object`** | `bool` |
+| **DateTime / Date / Time** | **`object`** | `datetime.datetime/date/time` |
+| **TimeSpan** | **`object`** | `datetime.timedelta` |
+| Currency | `object` | `Decimal` |
+| Binary | `object` | `bytes` |
+
+{: .주의 }
+> **시각 컬럼은 `datetime64` 가 아닙니다.** `.dt` 를 바로 쓰면
+> `AttributeError: Can only use .dt accessor with datetimelike values`.
+> `pd.to_datetime()` 먼저.
+
+**결측 모양**: `Int64`→`pd.NA` · `float`→`NaN` · 나머지 전부→`None` (판정은 항상 `isna()`)
+
+## 출력 전 체크리스트
+
+```python
+output = output.reset_index()                       # ① 인덱스는 전달되지 않는다
+output.columns = [str(c) for c in output.columns]   # ② 컬럼명은 문자열
+output.columns.name = None                          # ③ 피벗 잔재 제거
+```
+
+| 만들면 안 되는 것 | 오류 메시지 |
 |---|---|
-| Integer / LongInteger | `int32` / `int64` |
-| Real / SingleReal | `float64` / `float32` |
-| String | `object` |
-| Boolean | `bool` |
-| Date / DateTime | `datetime64[ns]` |
-| TimeSpan | `timedelta64[ns]` |
-| Binary | `bytes` |
+| 전부 결측인 컬럼 | `cannot determine type for column ...` |
+| 셀 안의 list/dict | `unknown type 'list' in column ...` |
+| 한 컬럼에 섞인 타입 | `types in column ... do not match` |
+| 중복 컬럼명 | `obj does not have unique column names` |
+
+```python
+import spotfire
+spotfire.set_spotfire_types(df, {"REMARK": "String"})   # 빈 컬럼을 꼭 내보내야 할 때
+```
 
 ## 탐색
 
