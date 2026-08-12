@@ -1,0 +1,73 @@
+title: Spotfire Python 데이터 함수 교안
+description: Spotfire에서 Python 데이터 함수를 활용하는 방법과, 생성형 AI로 원하는 코드를 얻어내는 실전 예제 모음
+lang: ko
+
+theme: just-the-docs
+url: ""
+baseurl: "/spotfire-data-function"
+permalink: pretty
+
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+# ---- just-the-docs 설정 -------------------------------------------------
+color_scheme: light
+search_enabled: true
+search:
+  heading_level: 3
+  previews: 2
+  preview_words_before: 5
+  preview_words_after: 10
+  tokenizer_separator: /[\s/]+/
+  rel_url: true
+  button: false
+
+heading_anchors: true
+back_to_top: true
+back_to_top_text: "맨 위로"
+
+aux_links:
+  "GitHub 저장소":
+    - "https://github.com/cozytk/spotfire-data-function"
+aux_links_new_tab: true
+
+nav_external_links:
+  - title: 예제 스크립트 내려받기
+    url: https://github.com/cozytk/spotfire-data-function/tree/main/examples
+    hide_icon: false
+
+footer_content: >-
+  삼성DS 임직원 대상 Spotfire 데이터 함수 교육용 자료 ·
+  데이터는 모두 공개 데이터이거나 교육용으로 생성한 가상 데이터입니다.
+
+last_edit_timestamp: false
+gh_edit_link: true
+gh_edit_link_text: "GitHub에서 이 페이지 수정"
+gh_edit_repository: "https://github.com/cozytk/spotfire-data-function"
+gh_edit_branch: "main"
+gh_edit_source: docs
+gh_edit_view_mode: "tree"
+
+callouts_level: loud
+callouts:
+  주의:
+    title: 주의
+    color: red
+  팁:
+    title: 팁
+    color: green
+  참고:
+    title: 참고
+    color: blue
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - vendor
