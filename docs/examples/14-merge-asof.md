@@ -1,5 +1,5 @@
 ---
-title: "14. 시간 근접 조인 (merge_asof) — 계측 시점의 설비 상태 붙이기"
+title: 14. 시간 근접 조인 (merge_asof) — 계측 시점의 설비 상태 붙이기
 parent: 예제 모음
 nav_order: 14
 ---

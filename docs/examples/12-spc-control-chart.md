@@ -1,5 +1,5 @@
 ---
-title: "12. SPC 관리도 + 공정능력지수(Cp/Cpk) + Western Electric 룰"
+title: 12. SPC 관리도 + 공정능력지수(Cp/Cpk) + Western Electric 룰
 parent: 예제 모음
 nav_order: 12
 ---

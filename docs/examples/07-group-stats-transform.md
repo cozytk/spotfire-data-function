@@ -1,5 +1,5 @@
 ---
-title: "07. 그룹 통계를 원본 행에 되붙이기 (transform)"
+title: 07. 그룹 통계를 원본 행에 되붙이기 (transform)
 parent: 예제 모음
 nav_order: 7
 ---

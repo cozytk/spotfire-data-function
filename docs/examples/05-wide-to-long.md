@@ -1,5 +1,5 @@
 ---
-title: "05. Wide → Long 변환 (센서 200개 컬럼을 3개로)"
+title: 05. Wide → Long 변환 (센서 200개 컬럼을 3개로)
 parent: 예제 모음
 nav_order: 5
 ---

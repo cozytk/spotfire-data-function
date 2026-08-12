@@ -1,13 +1,11 @@
-name: Deploy docs to GitHub Pages
+# 이 워크플로는 Pages 소스를 "GitHub Actions" 로 설정한 경우에만 사용합니다.
+#
+# 기본 설정("Deploy from a branch")에서는 GitHub 이 자체 빌더로 docs/ 를 빌드하므로
+# 이 워크플로가 필요하지 않습니다. (그 상태에서 실행하면 배포 단계에서 실패합니다.)
+# 그래서 자동 트리거 없이 수동 실행(workflow_dispatch)만 열어 두었습니다.
+name: Deploy docs to GitHub Pages (Actions 소스 전용)
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "docs/**"
-      - "examples/**"
-      - "scripts/**"
-      - ".github/workflows/pages.yml"
   workflow_dispatch:
 
 permissions:

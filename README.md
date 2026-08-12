@@ -74,15 +74,25 @@ Spotfire가 거부하는 출력(빈 테이블, 전부 결측인 컬럼, 셀 안�
 ```bash
 cd docs
 bundle install
-bundle exec jekyll serve      # http://localhost:4000/spotfire-data-function/
+bundle exec jekyll serve --config _config.yml,_config.local.yml
+# http://localhost:4000/spotfire-data-function/
 ```
+
+로컬에서는 `_config.local.yml` 로 테마를 젬(`just-the-docs`)에서 직접 읽습니다.
+GitHub 빌더는 `_config.yml` 의 `remote_theme` 로 테마를 내려받습니다.
 
 ## 배포
 
-`main` 브랜치에 푸시하면 GitHub Actions가 `docs/` 를 빌드해 GitHub Pages에 배포합니다
-(`.github/workflows/pages.yml`).
+**Settings → Pages → Source: Deploy from a branch** (기본값) 상태에서
+기본 브랜치의 `docs/` 폴더를 지정하면, GitHub 기본 빌더가 자동으로 빌드·배포합니다.
+`_config.yml` 이 `remote_theme` 를 쓰기 때문에 별도 설정 없이 동작합니다.
 
-최초 1회만 저장소 설정이 필요합니다: **Settings → Pages → Source: GitHub Actions**
+> 기본 빌더는 `github-pages` 젬 세트(Jekyll 3.10)를 사용하며 저장소의 `Gemfile` 을 무시합니다.
+> `theme:` 로 지정한 테마는 인식하지 못하므로 **반드시 `remote_theme:` 를 써야 합니다.**
+
+Pages 소스를 **GitHub Actions** 로 바꿔서 쓰고 싶다면
+`.github/workflows/pages.yml` 을 Actions 탭에서 수동 실행하세요
+(examples → docs 페이지 재생성까지 포함해 빌드합니다).
 
 ## 데이터 출처
 

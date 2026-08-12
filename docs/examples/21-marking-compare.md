@@ -1,5 +1,5 @@
 ---
-title: "21. 마킹(Marking) 입력 활용 — 선택한 구간 vs 나머지 비교"
+title: 21. 마킹(Marking) 입력 활용 — 선택한 구간 vs 나머지 비교
 parent: 예제 모음
 nav_order: 21
 ---

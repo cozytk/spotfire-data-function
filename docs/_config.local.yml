@@ -1,0 +1,7 @@
+# 로컬 미리보기 전용 오버라이드.
+# GitHub 빌더는 remote_theme 로 테마를 내려받지만, 로컬에서는 Gemfile 의 젬을 직접 씁니다.
+#   bundle exec jekyll serve --config _config.yml,_config.local.yml
+theme: just-the-docs
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap

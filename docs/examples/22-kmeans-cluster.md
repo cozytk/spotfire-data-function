@@ -1,5 +1,5 @@
 ---
-title: "22. LOT 프로파일 클러스터링 (KMeans)"
+title: 22. LOT 프로파일 클러스터링 (KMeans)
 parent: 예제 모음
 nav_order: 22
 ---

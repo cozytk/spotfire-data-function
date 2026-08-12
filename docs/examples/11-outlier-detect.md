@@ -1,5 +1,5 @@
 ---
-title: "11. 이상치 탐지 4종 비교 (IQR / Z / MAD / Hampel)"
+title: 11. 이상치 탐지 4종 비교 (IQR / Z / MAD / Hampel)
 parent: 예제 모음
 nav_order: 11
 ---

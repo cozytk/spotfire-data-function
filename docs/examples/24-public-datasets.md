@@ -1,5 +1,5 @@
 ---
-title: "24. 공개 데이터셋 종합 실습 (titanic / iris / diabetes)"
+title: 24. 공개 데이터셋 종합 실습 (titanic / iris / diabetes)
 parent: 예제 모음
 nav_order: 24
 ---

@@ -1,5 +1,5 @@
 ---
-title: "18. 설비 간 차이가 진짜인가 — ANOVA와 사후 다중비교"
+title: 18. 설비 간 차이가 진짜인가 — ANOVA와 사후 다중비교
 parent: 예제 모음
 nav_order: 18
 ---

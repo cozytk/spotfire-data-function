@@ -1,5 +1,5 @@
 ---
-title: "03. 값 치환과 조건부 파생 컬럼 (그리고 inplace 함정)"
+title: 03. 값 치환과 조건부 파생 컬럼 (그리고 inplace 함정)
 parent: 예제 모음
 nav_order: 3
 ---

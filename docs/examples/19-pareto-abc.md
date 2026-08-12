@@ -1,5 +1,5 @@
 ---
-title: "19. 파레토 분석과 ABC 등급 분류"
+title: 19. 파레토 분석과 ABC 등급 분류
 parent: 예제 모음
 nav_order: 19
 ---

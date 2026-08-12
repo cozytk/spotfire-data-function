@@ -2,12 +2,14 @@ title: Spotfire Python 데이터 함수 교안
 description: Spotfire에서 Python 데이터 함수를 활용하는 방법과, 생성형 AI로 원하는 코드를 얻어내는 실전 예제 모음
 lang: ko
 
-theme: just-the-docs
+# GitHub Pages 의 기본 빌더(Deploy from a branch)와 Actions 빌드 양쪽에서 동작하도록 remote_theme 사용
+remote_theme: just-the-docs/just-the-docs
 url: ""
 baseurl: "/spotfire-data-function"
 permalink: pretty
 
 plugins:
+  - jekyll-remote-theme
   - jekyll-seo-tag
   - jekyll-sitemap
 

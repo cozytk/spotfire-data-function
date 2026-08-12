@@ -10,6 +10,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import yaml
+
 from common import ROOT, load_all
 
 DOCS = ROOT / "docs"
@@ -61,10 +63,15 @@ def render(ex, nav_order: int) -> str:
     data_files = ex.meta.get("data") or []
     data_links = ", ".join(f"[`{d}`]({REPO}/blob/main/data/{d})" for d in data_files)
 
+    # 제목에 따옴표·콜론이 들어가도 깨지지 않도록 YAML 로 직렬화한다
+    front_matter = yaml.safe_dump(
+        {"title": f"{ex.number:02d}. {ex.title}", "parent": "예제 모음", "nav_order": nav_order},
+        allow_unicode=True,
+        sort_keys=False,
+    ).strip()
+
     head = f"""---
-title: "{ex.number:02d}. {ex.title}"
-parent: 예제 모음
-nav_order: {nav_order}
+{front_matter}
 ---
 
 # {ex.number:02d}. {ex.title}

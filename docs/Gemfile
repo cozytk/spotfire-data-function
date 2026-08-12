@@ -1,7 +1,10 @@
 source "https://rubygems.org"
 
+# GitHub Pages 의 기본 빌더는 이 Gemfile 을 쓰지 않습니다(github-pages 젬 세트를 사용).
+# 이 파일은 로컬 미리보기와 Actions 빌드용입니다.
 gem "jekyll", "~> 4.3"
-gem "just-the-docs", "0.10.1"
+gem "jekyll-remote-theme", "~> 0.4"
+gem "just-the-docs", "0.10.1"   # 로컬 미리보기용 (_config.local.yml 과 함께 사용)
 gem "jekyll-seo-tag", "~> 2.8"
 gem "jekyll-sitemap", "~> 1.4"
 gem "webrick", "~> 1.8"
