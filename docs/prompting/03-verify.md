@@ -64,7 +64,7 @@ after.isna().sum().sum()    # 처리 후 — 이유 없이 늘었다면 조사
 
 ---
 
-## 조용히 틀리는 대표 유형 8가지
+## 조용히 틀리는 대표 유형 9가지
 
 ### 1. 정렬을 빼먹은 시계열 계산
 
@@ -125,6 +125,18 @@ output = df.groupby("EQP_ID", as_index=False)["THICKNESS"].mean()  # ✅
 ```
 
 `pivot_table()`, `value_counts()`, `describe()`, `agg()` 전부 해당합니다.
+
+### 9. 정수 컬럼에서 `np.isnan()` 이 결측을 놓침
+
+Spotfire의 정수 컬럼은 nullable `Int64` 로 들어오고 결측은 `pd.NA` 입니다.
+`np.isnan()` 은 그 자리에 `True` 가 아니라 `pd.NA` 를 넣고,
+`pd.NA` 는 필터링에서 `False` 처럼 취급됩니다.
+**결측이 있는데도 "없다"는 답이 나옵니다.**
+
+```python
+np.isnan(df["WAFER_NO"]).any()   # ❌ 결측이 있어도 False
+df["WAFER_NO"].isna().any()      # ✅
+```
 
 ---
 

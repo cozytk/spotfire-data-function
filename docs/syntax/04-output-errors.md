@@ -131,7 +131,7 @@ df["HOUR"] = df["MEAS_TIME"].dt.hour
 ```
 
 같은 이유로 TimeSpan 컬럼은 `pd.to_timedelta()` 가 필요합니다.
-자세한 내용은 [타입 매핑 표](../03-datatypes/#spotfire--pandas-타입-매핑)를 보세요.
+자세한 내용은 [3. 데이터 타입과 결측치](../03-datatypes/)를 보세요.
 
 {: .주의 }
 > 로컬에서 CSV로 테스트할 때는 시각이 **문자열**이라 이 오류가 안 납니다.

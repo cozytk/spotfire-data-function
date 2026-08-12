@@ -99,8 +99,22 @@ numpy의 `int64` 가 아니라 **결측을 담을 수 있는 pandas 확장 타�
 |---|---|---|
 | 결측 표현 | 불가능 | `pd.NA` |
 | 결측 있는 연산 | — | 결과도 `pd.NA` (`NaN` 아님) |
-| `np.isnan()` | 동작 | **동작 안 함** — `pd.isna()` 를 쓸 것 |
-| scikit-learn 등에 투입 | 가능 | **거부되는 경우 있음** → `astype(float)` |
+| `np.isnan()` | 정상 동작 | **조용히 틀림** — 아래 참고 |
+| numpy·scikit-learn 에 투입 | 가능 | 오류가 날 수 있음 → `astype(float)` |
+
+{: .주의 }
+> ## `np.isnan()` 은 오류를 내지 않고 **결측을 놓칩니다**
+>
+> `Int64` 컬럼에 `np.isnan()` 을 쓰면 결측 자리에 `True` 가 아니라 **`pd.NA`** 가 들어갑니다.
+> 그리고 `pd.NA` 는 필터링에서 `False` 처럼 취급됩니다.
+>
+> ```python
+> mask = np.isnan(df["WAFER_NO"])
+> mask.any()      # ❌ 결측이 있는데도 False
+> df[mask]        # ❌ 빈 결과
+>
+> df["WAFER_NO"].isna()   # ✅ 결측 판정은 언제나 isna()
+> ```
 
 ```python
 # 외부 라이브러리에 넘기기 전에는 일반 float 로 바꾸는 편이 안전합니다

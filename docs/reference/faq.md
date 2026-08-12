@@ -79,9 +79,23 @@ else:
 
 ### 결과가 빈 테이블이면 오류가 납니다
 
-Spotfire는 **모든 값이 결측인 컬럼**의 타입을 결정할 수 없어 내보내기에 실패합니다.
+```text
+SBDFError: cannot determine type for column 'X'; all values are missing
+```
+
+Spotfire는 컬럼의 **값을 보고** 타입을 정하므로, 모든 값이 결측이면 실패합니다.
 빈 결과일 때는 **타입에 맞는 기본값이 든 1행**을 대신 반환하세요.
 ([04번 예제](../../examples/04-join-and-split/)의 `safe()` 함수)
+
+값이 없는 컬럼을 꼭 내보내야 한다면 **타입을 직접 지정**하면 됩니다.
+
+```python
+import spotfire
+spotfire.set_spotfire_types(result, {"REMARK": "String"})   # 모든 가공을 끝낸 뒤 마지막에
+```
+
+한 번에 방어하려면 [26번 예제(출력 안전장치)](../../examples/26-safe-output/)의
+`finalize()` 를 복사해서 쓰세요.
 
 ### 출력 테이블이 실행할 때마다 새로 생깁니다
 
@@ -121,8 +135,34 @@ Spotfire 기본 시각화로 그릴 수 있는 것은 Spotfire로 그리세요.
 
 ### `print()` 결과는 어디서 보나요?
 
-**기본적으로 보이지 않습니다.** 디버깅은 확인하고 싶은 값을 **출력 테이블로 내보내는 방식**을 쓰세요.
+**`도구 > 옵션 > 데이터 함수` 에서 데이터 함수 디버깅을 켜면** 실행 결과에
+`Standard output:` 아래로 표시됩니다. 오류가 났을 때는 설정과 관계없이 오류 메시지와 함께 나옵니다.
+
+켜지 않으면 성공한 실행의 `print()` 는 보이지 않습니다.
+"print를 넣었는데 아무것도 안 나온다"의 원인은 대부분 이것입니다.
 ([디버깅 방법](../../syntax/06-run-debug/))
+
+### `.dt` 를 쓰면 `AttributeError` 가 납니다
+
+Spotfire의 DateTime 컬럼은 `datetime64[ns]` 가 아니라 **`object` dtype** 으로 들어옵니다.
+`pd.to_datetime()` 으로 변환한 뒤에 쓰세요.
+
+```python
+df["MEAS_TIME"] = pd.to_datetime(df["MEAS_TIME"])
+df["HOUR"] = df["MEAS_TIME"].dt.hour
+```
+
+Date·Time·TimeSpan·Boolean·Binary·Currency도 모두 `object` 입니다.
+([타입 매핑](../../syntax/03-datatypes/))
+
+### 결과에서 그룹 컬럼이 사라졌습니다
+
+**인덱스는 Spotfire로 전달되지 않습니다.**
+`groupby()` 결과를 그대로 내보내면 그룹 키가 인덱스에 있어 조용히 사라집니다.
+
+```python
+output = df.groupby("EQP_ID", as_index=False)["THICKNESS"].mean()   # ✅
+```
 
 ### `inplace=True` 를 썼는데 값이 안 바뀝니다
 
@@ -154,8 +194,33 @@ df["T"] = pd.to_datetime(df["T"], unit="D", origin="1899-12-30")      # Excel �
 
 ### 정수 컬럼이 1.0, 2.0 처럼 보입니다
 
-해당 컬럼에 **결측이 있어서** `float64` 로 바뀐 것입니다.
+해당 컬럼에 **결측이 있어서** Spotfire 쪽에서 이미 Real(실수)로 넘어온 것입니다.
 결측을 채운 뒤 `astype(int)`, 또는 결측을 유지하려면 `astype("Int64")` (대문자 I).
+
+### 정수 컬럼에서 `np.isnan()` 이 결측을 못 찾습니다
+
+**오류가 나지 않고 조용히 틀리기 때문에 특히 위험합니다.**
+
+Spotfire의 Integer/LongInteger는 **nullable `Int32`/`Int64`** 로 들어오고,
+결측은 `np.nan` 이 아니라 `pd.NA` 입니다.
+`np.isnan()` 은 그 자리에 `True` 가 아니라 **`pd.NA` 를 돌려주고**,
+`pd.NA` 는 필터링에서 `False` 처럼 취급됩니다.
+
+```python
+mask = np.isnan(df["WAFER_NO"])   # 결측 자리에 True 가 아니라 <NA>
+mask.any()                        # ❌ 결측이 있는데도 False
+df[mask]                          # ❌ 빈 결과
+
+df["WAFER_NO"].isna()             # ✅ 항상 이것을 쓰세요
+```
+
+또한 `np.polyfit()` 같은 numpy 함수에 `pd.NA` 가 든 컬럼을 그대로 넘기면
+`LinAlgError` 처럼 원인을 짐작하기 어려운 오류가 납니다.
+**외부 라이브러리에 넘기기 전에는 일반 실수로 바꾸세요.**
+
+```python
+X = df[["THICKNESS", "PARTICLE_CNT"]].astype(float).to_numpy()
+```
 
 ---
 
@@ -203,14 +268,17 @@ A의 출력을 B의 입력으로 연결하면 **의존 관계에 따라 순서�
 
 ### AI가 준 코드가 Spotfire에서 안 돌아갑니다
 
-대부분 아래 셋입니다.
+대부분 아래 다섯입니다. **1~3번은 형태 문제, 4~5번은 타입 문제**입니다.
 
 1. `pd.read_csv(...)` 로 **파일을 읽으려 함** → 입력 변수를 쓰도록 수정
 2. `df.to_csv(...)` 로 **파일에 저장** → 출력 변수에 할당하도록 수정
 3. **`output` 변수 할당 누락** → 마지막 줄 확인
+4. **시각 컬럼에 `.dt` 를 바로 사용** → Spotfire DateTime은 `object` 이므로
+   `pd.to_datetime()` 이 먼저 필요 (AI가 가장 자주 하는 실수)
+5. **`groupby()` 결과를 그대로 출력** → 인덱스가 전달되지 않아 그룹 키가 사라짐
 
-프롬프트 맨 앞에 "Spotfire Python 데이터 함수, 입력은 DataFrame 변수, 결과는 output 변수, 파일 입출력 금지"를
-넣으면 대부분 예방됩니다. ([AI 활용법](../../prompting/))
+프롬프트 맨 앞에 [공통 규약 문단](../../prompting/01-tips/)을
+붙여 두면 대부분 예방됩니다. ([AI 활용법](../../prompting/))
 
 ### 사내 데이터를 AI에 붙여 넣어도 되나요?
 

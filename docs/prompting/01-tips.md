@@ -35,8 +35,8 @@ Spotfire Python 데이터 함수를 작성해줘.
 | AI의 가정 | 실제 Spotfire 입력 | 결과 |
 |---|---|---|
 | `MEAS_TIME` 은 `datetime64` 겠지 | `object` (`datetime.datetime`) | `.dt` 사용 → **AttributeError** |
-| `WAFER_NO` 는 `int64` 겠지 | `Int64` (nullable) | `np.isnan()` → **TypeError** |
-| `IS_OK` 는 `bool` 이겠지 | `object` (`bool`) | `~df["IS_OK"]` → 오동작 |
+| `WAFER_NO` 는 `int64` 겠지 | `Int64` (nullable) | `np.isnan()` → **조용히 결측을 놓침** |
+| `IS_OK` 는 `bool` 이겠지 | `object` (`bool`) | 불리언 연산 오동작 |
 
 그래서 **`print(input.dtypes)` 결과를 그대로 붙여 주는 것**이
 프롬프트 품질을 가장 크게 올립니다.
