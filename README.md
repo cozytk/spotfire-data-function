@@ -14,8 +14,19 @@ Python 데이터 함수로 해결하는 방법과, 그 코드를 **생성형 AI�
 ├── docs/          교안 사이트 (GitHub Pages, Jekyll + just-the-docs)
 ├── examples/      데이터 함수 예제 24종 — 설명 + 실행 가능한 코드
 ├── data/          실습용 CSV 11종 (공개 데이터 + 교육용 가상 데이터)
+├── templates/     AI 코드 요청 프롬프트 템플릿 (복사용 원본)
 └── scripts/       데이터 생성 / 예제 실행 검증 / 교안 빌드 스크립트
 ```
+
+## 프롬프트 템플릿
+
+[`templates/code-prompt-template.md`](templates/code-prompt-template.md) 는
+생성형 AI에게 코드를 요청할 때 그대로 복사해 쓰는 **범용 템플릿**입니다.
+Spotfire 데이터 함수뿐 아니라 SQL·엑셀·파이썬 스크립트·웹 코드에도 동일하게 쓰도록
+`[환경]` 블록만 갈아 끼우는 구조로 만들었습니다.
+
+- 전체/짧은 버전 템플릿, 환경별 스니펫, 상황별 변형(수정·디버깅·검토·성능·이관), 발송 전 체크리스트
+- 해설과 채워 넣은 예시: [범용 프롬프트 템플릿](https://cozytk.github.io/spotfire-data-function/prompting/04-universal-template/)
 
 ## 예제 24종
 
